@@ -1,0 +1,88 @@
+userResponse: |
+  <USER>
+    <USER_INFO>
+      <USER_BARCODE><%= data.fields.barcode %></USER_BARCODE>
+      <USER_KEY><%= data.key %></USER_KEY>
+      <USER_LIBRARY><%= data.fields.library.key %></USER_LIBRARY>
+      <USER_BARCODE_EXPIRATION>99990101</USER_BARCODE_EXPIRATION>
+    </USER_INFO>
+  </USER>
+cancelResponse: |
+  <ITEM>
+    <HOLD_CANCEL_STATUS><%= result %></HOLD_CANCEL_STATUS>
+  </ITEM>
+holdResponse: |
+  <USER>
+    <USER_BARCODE><%= data.fields.barcode %></USER_BARCODE>
+    <HOLDS>
+    <% holds.forEach(hold => { %>
+      <HOLD_ITEM>
+        <HOLD_BARCODE><%= hold.data.fields.item.fields.barcode %></HOLD_BARCODE>
+        <HOLD_TITLE><%= hold.data.fields.bib.fields.title %></HOLD_TITLE>
+        <HOLD_AVAILABLE_DATE><%= ILSWSDateToSBDate(hold.data.fields.fillByDate) %></HOLD_AVAILABLE_DATE>
+        <HOLD_PICKUP_LOCATION><%= hold.data.fields.pickupLibrary.key %></HOLD_PICKUP_LOCATION>
+        <HOLD_PICKUP_DATE><%= ILSWSDateToSBDate(hold.data.fields.expirationDate) %></HOLD_PICKUP_DATE>
+        <HOLD_DB_KEY><%= hold.data.key %></HOLD_DB_KEY>
+      </HOLD_ITEM>
+    <% }); %>
+    </HOLDS>
+    <HOLDS_UNAVAILABLE>
+    <% holdsUA.forEach(hold => { %>
+      <HOLD_ITEM_UNAVAILABLE>
+        <HOLD_TITLE_UNAVAILABLE><%= hold.data.fields.bib.fields.title %></HOLD_TITLE_UNAVAILABLE>
+        <HOLD_DB_KEY><%= hold.data.key %></HOLD_DB_KEY>
+      </HOLD_ITEM_UNAVAILABLE>
+    <% }); %>
+    </HOLDS_UNAVAILABLE>
+ 
+  </USER>
+courtesyResponse: |
+  <USER>
+    <USER_BARCODE><%= data.fields.barcode %></USER_BARCODE>
+    <COURTESY>
+    <% items.forEach(item => { %>
+      <COURTESY_ITEM>
+        <COURTESY_BARCODE><%= item.data.fields.item.fields.barcode %></COURTESY_BARCODE>
+        <COURTESY_TITLE><%= item.data.fields.item.fields.bib.fields.title %></COURTESY_TITLE>
+        <COURTESY_DUE_DATE><%= ILSWSDateToSBDate(item.data.fields.dueDate) %></COURTESY_DUE_DATE>
+        <COURTESY_RENEW_FLAG><%= item.renewFlags[0] %></COURTESY_RENEW_FLAG>
+        <COURTESY_RENEW_FLAGS><%= item.renewFlags.join(',') %></COURTESY_RENEW_FLAGS>
+        <COURTESY_HOLD_COUNT><%= item.holdCount %></COURTESY_HOLD_COUNT>
+      </COURTESY_ITEM>
+    <% }); %>
+    </COURTESY>
+  </USER>
+overdueResponse: |
+  <USER>
+    <USER_BARCODE><%= data.fields.barcode %></USER_BARCODE>
+    <OVERDUE>
+    <% items.forEach(item => { %>
+      <OVERDUE_ITEM>
+        <OVERDUE_BARCODE><%= item.data.fields.item.fields.barcode %></OVERDUE_BARCODE>
+        <OVERDUE_TITLE><%= item.data.fields.item.fields.bib.fields.title %></OVERDUE_TITLE>
+        <OVERDUE_DUE_DATE><%= ILSWSDateToSBDate(item.data.fields.dueDate) %></OVERDUE_DUE_DATE>
+        <OVERDUE_RENEW_FLAG><%= item.overdueFlags[0] %></OVERDUE_RENEW_FLAG>
+        <OVERDUE_RENEW_FLAGS><%= item.overdueFlags.join(',') %></OVERDUE_RENEW_FLAGS>
+        <OVERDUE_HOLD_COUNT><%= item.holdCount %></OVERDUE_HOLD_COUNT>
+      </OVERDUE_ITEM>
+    <% }); %>
+    </OVERDUE>
+  </USER>
+chkchargeResponse: |
+  <ITEM>
+    <ITEM_BARCODE><%= item.data.fields.item.fields.barcode %></ITEM_BARCODE>
+    <USER_BARCODE><%= data.fields.barcode %></USER_BARCODE>
+    <CHARGED><%= item.data.fields.item.fields.currentLocation.key === 'CHECKEDOUT' ? '1' : '0' %></CHARGED>
+  </ITEM>
+chkholdResponse: |
+  <ITEM>
+    <ITEM_BARCODE><%= data.itemID %></ITEM_BARCODE>
+    <ONHOLD><%= !!(data.itemStatus && data.itemStatus.includes('ONHOLD')) ? 1 : 0 %></ONHOLD>
+  </ITEM>
+feeResponse: |
+  <USER>
+    <USER_BARCODE><%= data.fields.barcode %></USER_BARCODE>
+    <FEES>
+      <FEE_TOTAL><%= data.fields.patronStatusInfo.fields.amountOwed.amount %></FEE_TOTAL>
+    </FEES>
+  </USER>
