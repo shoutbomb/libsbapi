@@ -384,7 +384,9 @@ function ILSWSErrorResponse (error) {
       return Boom.gatewayTimeout(error.message)
     default:
       console.log(error)
-      console.log(error.response.data.messageList[0].message)
+      if (error.response.data.messageList) {
+        console.log(error.response.data.messageList[0].message)
+      }
       return Boom.badImplementation(`ILSWS ${error.toString()}`)
   }
 }
