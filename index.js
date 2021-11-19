@@ -354,7 +354,10 @@ const SBAPI = {
       .then(loginResponse => loginResponse.data)
       .then(loginData => ILSWS.lookupItemStatus(loginData.sessionToken, params.id))
       .then(lookupItemStatusResponse => lookupItemStatusResponse.data)
-      .then(itemStatusData => h.response(XML_HEADER + ejs.render(templates.chkholdResponse, { data: itemStatusData })).type('application/xml'))
+      .then((itemStatusData) => {
+	if (itemStatusData.faultResponse && itemStatusData.faultResponse.string == 'Item not found in catalog') return Boom.notFound('record not found')
+        return h.response(XML_HEADER + ejs.render(templates.chkholdResponse, { data: itemStatusData })).type('application/xml')
+      })
       .catch(error => ILSWSErrorResponse(error))
   },
 
@@ -384,7 +387,7 @@ function ILSWSErrorResponse (error) {
       return Boom.gatewayTimeout(error.message)
     default:
       console.log(error)
-      if (error.response.data.messageList) {
+      if (error.response.data.messageList.length) {
         console.log(error.response.data.messageList[0].message)
       }
       return Boom.badImplementation(`ILSWS ${error.toString()}`)
