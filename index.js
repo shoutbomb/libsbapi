@@ -303,16 +303,19 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
+        if (response.messageList && response.messageList[0].code == 'recordNotFound') return Boom.notFound('record not found')
         const overdueItems = (response && response[0].filter(e => e.data.fields.overdue)) || []
 
         _.each(overdueItems, i => {
-          let count = 0
-          _.each(i.data.fields.item.fields.holdRecordList, holdRecord => {
-            if (holdRecord.fields.status === 'PLACED') count++
-          })
-          i.holdCount = count
-          i.overdueFlags = setFailureFlags(barcodeData.fields, i)
-          if (i.overdueFlags.length === 0) i.overdueFlags.push('10')
+	  if (i.data.fields.item.fields.holdRecordList) {
+            let count = 0
+            _.each(i.data.fields.item.fields.holdRecordList, holdRecord => {
+              if (holdRecord.fields.status === 'PLACED') count++
+            })
+            i.holdCount = count
+            i.overdueFlags = setFailureFlags(barcodeData.fields, i)
+            if (i.overdueFlags.length === 0) i.overdueFlags.push('10')
+          }
         })
 
         return h.response(XML_HEADER + ejs.render(templates.overdueResponse, {
@@ -355,7 +358,7 @@ const SBAPI = {
       .then(loginData => ILSWS.lookupItemStatus(loginData.sessionToken, params.id))
       .then(lookupItemStatusResponse => lookupItemStatusResponse.data)
       .then((itemStatusData) => {
-	if (itemStatusData.faultResponse && itemStatusData.faultResponse.string == 'Item not found in catalog') return Boom.notFound('record not found')
+        if (itemStatusData.faultResponse && itemStatusData.faultResponse.string == 'Item not found in catalog') return Boom.notFound('record not found')
         return h.response(XML_HEADER + ejs.render(templates.chkholdResponse, { data: itemStatusData })).type('application/xml')
       })
       .catch(error => ILSWSErrorResponse(error))
