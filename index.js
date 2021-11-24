@@ -303,8 +303,7 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-        if (response.messageList && response.messageList[0].code == 'recordNotFound') return Boom.notFound('record not found')
-        const overdueItems = (response && response[0].filter(e => e.data.fields.overdue)) || []
+        const overdueItems = (response && response[0] && response[0].filter(e => e.data.fields.overdue, 0)) || []
 
         _.each(overdueItems, i => {
 	  if (i.data.fields.item.fields.holdRecordList) {
@@ -390,7 +389,7 @@ function ILSWSErrorResponse (error) {
       return Boom.gatewayTimeout(error.message)
     default:
       console.log(error)
-      if (error.response.data.messageList.length) {
+      if (error.response.data.messageList) {
         console.log(error.response.data.messageList[0].message)
       }
       return Boom.badImplementation(`ILSWS ${error.toString()}`)
