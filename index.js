@@ -303,8 +303,13 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-        const overdueItems = (response && response[0] && response[0].filter(e => e.data.fields.overdue, 0)) || []
 
+	// Remove nulls from response
+	var len = response[0].length, i;
+        for(i = 0; i < len; i++ ) response[0][i] && response[0].push(response[0][i])
+        response[0].splice(0 , len)
+	
+	const overdueItems = (response && response[0] && response[0].filter(e => e.data.fields.overdue))
         _.each(overdueItems, i => {
 	  if (i.data.fields.item.fields.holdRecordList) {
             let count = 0
@@ -316,6 +321,8 @@ const SBAPI = {
             if (i.overdueFlags.length === 0) i.overdueFlags.push('10')
           }
         })
+
+	if (!overdueItems) return Boom.notFound('record not found')
 
         return h.response(XML_HEADER + ejs.render(templates.overdueResponse, {
           data: barcodeData,
