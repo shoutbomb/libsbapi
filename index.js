@@ -249,6 +249,7 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(holdRecordList.map(holdRecord => ILSWS.getHoldRecord(loginData.sessionToken, holdRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
+	response[0] = removeNulls(response[0])
         return h.response(XML_HEADER + ejs.render(templates.holdResponse, {
           data: barcodeData,
           holds: _.filter((response && response[0]) || [], o => _.get(o, 'data.fields.item') && _.get(o, 'data.fields.beingHeldDate')),
@@ -267,12 +268,11 @@ const SBAPI = {
       .then(([loginData, barcodeData]) => {
         const circRecordList = barcodeData.fields.circRecordList
         if (!circRecordList) return Promise.all([barcodeData, null])
-        console.log(circRecordList)
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
+	response[0] = removeNulls(response[0])
         const renewItems = _.filter((response && response[0]) || [], o => _.get(o, 'data.fields.item'))
-
         _.each(renewItems, i => {
           let count = 0
           _.each(i.data.fields.item.fields.holdRecordList, holdRecord => {
@@ -303,8 +303,8 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-        const overdueItems = (response && response[0] && response[0].filter(e => e.data.fields.overdue, 0)) || []
-
+	response[0] = removeNulls(response[0])
+	const overdueItems = (response && response[0] && response[0].filter(e => e.data.fields.overdue))
         _.each(overdueItems, i => {
 	  if (i.data.fields.item.fields.holdRecordList) {
             let count = 0
@@ -316,6 +316,8 @@ const SBAPI = {
             if (i.overdueFlags.length === 0) i.overdueFlags.push('10')
           }
         })
+
+	if (!overdueItems) return Boom.notFound('record not found')
 
         return h.response(XML_HEADER + ejs.render(templates.overdueResponse, {
           data: barcodeData,
@@ -337,6 +339,7 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
+	response[0] = removeNulls(response[0])
         const items = (response && response[0].filter(e => {
           return e.data.fields.item.fields.barcode === params.id
         }) || [])
@@ -439,6 +442,14 @@ async function start () {
       })
     })
     .catch(error => server.log(['error'], error))
+}
+
+// Remove nulls from array
+function removeNulls(myArray) {
+  var len = myArray.length, i;
+  for(i = 0; i < len; i++ ) myArray[i] && myArray.push(myArray[i])
+  myArray.splice(0 , len)
+  return myArray
 }
 
 start()
