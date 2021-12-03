@@ -339,7 +339,7 @@ const SBAPI = {
       .then(([barcodeData, ...response]) => {
 	if (response[0].length) response[0] = removeNulls(response[0])
         const items = (response && response[0].filter(e => { return e.data.fields.item.fields.barcode === params.id }) || [])
-        if (items.length === 0) return Boom.notFound('item not found for this patron (300)')
+        if (!items.length) return Boom.notFound('item not found for this patron (300)')
         return h.response(XML_HEADER + ejs.render(templates.chkchargeResponse, {
           data: barcodeData,
           item: items[0]
