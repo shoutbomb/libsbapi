@@ -48,11 +48,11 @@ const requestHandlers = {
         holdexpiration: { params: ['data'] }
       }
 
-      if (!reports[r.query.report]) return Boom.badRequest('invalid report')
+      if (!reports[r.query.report]) return Boom.badRequest('invalid report (100)')
 
       const missingParams = reports[r.query.report].params.filter(e => !r.query[e])
-      if (missingParams.length > 0) {
-        return Boom.badRequest(`missing required parameters: ${missingParams.join()}`)
+      if (missingParams.length) {
+        return Boom.badRequest(`missing required parameters: ${missingParams.join()}` + ' (101)')
       }
 
       return SBAPI[r.query.report](r.query, h)
@@ -162,7 +162,7 @@ const ILSWS = {
     }
   }).catch(error => {
     console.log(error.response.data)
-    console.log('FUUUU')
+    // console.log('FUUUU')
     if (error.response && error.response.status === 404) return null
     throw error
   }),
@@ -183,7 +183,7 @@ const setFailureFlags = (patron, item) => {
   const flags = []
 
   // patron status blocked
-  console.log(patron.standing.key)
+  // console.log(patron.standing.key)
   if (_.includes(['BLOCKED', 'BARRED', 'EXCLUDED'], patron.standing.key)) {
     flags.push('12')
   }
@@ -249,7 +249,7 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(holdRecordList.map(holdRecord => ILSWS.getHoldRecord(loginData.sessionToken, holdRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-	response[0] = removeNulls(response[0])
+	if (response[0].length) response[0] = removeNulls(response[0])
         return h.response(XML_HEADER + ejs.render(templates.holdResponse, {
           data: barcodeData,
           holds: _.filter((response && response[0]) || [], o => _.get(o, 'data.fields.item') && _.get(o, 'data.fields.beingHeldDate')),
@@ -271,7 +271,7 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-	response[0] = removeNulls(response[0])
+	if (response[0].length) response[0] = removeNulls(response[0])
         const renewItems = _.filter((response && response[0]) || [], o => _.get(o, 'data.fields.item'))
         _.each(renewItems, i => {
           let count = 0
@@ -303,8 +303,8 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-	response[0] = removeNulls(response[0])
-	const overdueItems = (response && response[0] && response[0].filter(e => e.data.fields.overdue))
+	if (response[0].length) response[0] = removeNulls(response[0])
+	const overdueItems = _.filter((response && response[0]) || [], e => _.get(e, 'data.fields.overdue'))
         _.each(overdueItems, i => {
 	  if (i.data.fields.item.fields.holdRecordList) {
             let count = 0
@@ -316,9 +316,7 @@ const SBAPI = {
             if (i.overdueFlags.length === 0) i.overdueFlags.push('10')
           }
         })
-
-	if (!overdueItems) return Boom.notFound('record not found')
-
+	// if (!overdueItems) return Boom.notFound('record not found (300)')
         return h.response(XML_HEADER + ejs.render(templates.overdueResponse, {
           data: barcodeData,
           items: overdueItems,
@@ -339,13 +337,9 @@ const SBAPI = {
         return Promise.all([barcodeData, axios.all(circRecordList.map(circRecord => ILSWS.getCircRecord(loginData.sessionToken, circRecord.key)))])
       })
       .then(([barcodeData, ...response]) => {
-	response[0] = removeNulls(response[0])
-        const items = (response && response[0].filter(e => {
-          return e.data.fields.item.fields.barcode === params.id
-        }) || [])
-
-        if (items.length === 0) return Boom.notFound('item not found for this patron')
-
+	if (response[0].length) response[0] = removeNulls(response[0])
+        const items = (response && response[0].filter(e => { return e.data.fields.item.fields.barcode === params.id }) || [])
+        if (!items.length) return Boom.notFound('item not found for this patron (300)')
         return h.response(XML_HEADER + ejs.render(templates.chkchargeResponse, {
           data: barcodeData,
           item: items[0]
@@ -360,7 +354,7 @@ const SBAPI = {
       .then(loginData => ILSWS.lookupItemStatus(loginData.sessionToken, params.id))
       .then(lookupItemStatusResponse => lookupItemStatusResponse.data)
       .then((itemStatusData) => {
-        if (itemStatusData.faultResponse && itemStatusData.faultResponse.string == 'Item not found in catalog') return Boom.notFound('record not found')
+        if (itemStatusData.faultResponse && itemStatusData.faultResponse.string == 'Item not found in catalog') return Boom.notFound('record not found (301)')
         return h.response(XML_HEADER + ejs.render(templates.chkholdResponse, { data: itemStatusData })).type('application/xml')
       })
       .catch(error => ILSWSErrorResponse(error))
@@ -380,22 +374,22 @@ function ILSWSErrorResponse (error) {
   if (error.response) {
     switch (error.response.status) {
       case 404:
-        return Boom.notFound('record not found')
+        return Boom.notFound('record not found (300)')
         break
     }
   }
 
   switch (error.errno) {
     case 'ENOTFOUND':
-      return Boom.badGateway(`DNS resolution failed for ${config.ILSWS_HOSTNAME}`)
+      return Boom.badGateway(`DNS resolution failed for ${config.ILSWS_HOSTNAME}` + ' (400)')
     case 'ECONNABORTED':
-      return Boom.gatewayTimeout(error.message)
+      return Boom.gatewayTimeout(error.message + ' (500)')
     default:
       console.log(error)
-      if (error.response.data.messageList) {
+      if (error.response.data.messageList.length) {
         console.log(error.response.data.messageList[0].message)
       }
-      return Boom.badImplementation(`ILSWS ${error.toString()}`)
+      return Boom.badImplementation(`ILSWS ${error.toString()}` + ' (600)')
   }
 }
 
