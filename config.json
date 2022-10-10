@@ -2,7 +2,7 @@
   "SBAPI_HOST": "0.0.0.0",
   "SBAPI_PORT": 58460,
   "SBAPI_BACKEND": "ilsws",
-  "SBAPI_TIMEOUT": 5000,
+  "SBAPI_TIMEOUT": 10000,
   "ILSWS_USERNAME": "admin",
   "ILSWS_PASSWORD": "MCL@DM1N",
   "ILSWS_HOSTNAME": "sdws06.sirsidynix.net",
