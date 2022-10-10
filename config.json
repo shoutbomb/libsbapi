@@ -7,7 +7,7 @@
   "ILSWS_PASSWORD": "MCL@DM1N",
   "ILSWS_HOSTNAME": "sdws06.sirsidynix.net",
   "ILSWS_PORT": 443,
-  "ILSWS_WEBAPP": "multcolib_ilsws",
+  "ILSWS_WEBAPP": "multcolibtest_ilsws",
   "ILSWS_CLIENTID": "SymWSTestClient",
   "ILSWS_ALTERNATEID_FIELD": "PREV_ID2",
   "PTYPE_MAPPING": {
