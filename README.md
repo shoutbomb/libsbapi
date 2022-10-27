@@ -2,199 +2,239 @@
 
 Custom API for integration of Shoutbomb with Symphony. 
 
-NOTES
-
-customInformation fails on test, LOSFORMAT policy does not exist
-
-
-SBAPI Validation
+NOTES: custom Information fails on test, LOSFORMAT policy does not exist
 
 These are the SBAPI endpoints
+
+
+Example: userkey – returns user key/user barcode/home library/barcode expiration date when querying a user barcode
 
 URL: https://server:port/cgi-bin/sb.cgi?report=userkey&uid=21168045392313
 
 Input: uid = patron barcode number
 
 Output:
+	<USER>
+		<USER_INFO>
+			<USER_BARCODE>21168045392313</USER_BARCODE>
+			<USER_KEY>445800</USER_KEY>
+			<USER_LIBRARY>NPO</USER_LIBRARY>
+			<USER_BARCODE_EXPIRATION>99990101</USER_BARCODE_EXPIRATION>
+		</USER_INFO>
+	</USER>
 
 
-21168045392313
-445800
-NPO
-99990101
-
+Example: userbarcode – returns user key/user barcode/home library/barcode expiration date when querying a user key
 
 URL: https://server:port/cgi-bin/sb.cgi?report=userbarcode&ukey=445800
 
 Input: ukey = user internal key
 
 Output:
+	<USER>
+		<USER_INFO>
+			<USER_BARCODE>21168045392313</USER_BARCODE>
+			<USER_KEY>445800</USER_KEY>
+			<USER_LIBRARY>NPO</USER_LIBRARY>
+			<USER_BARCODE_EXPIRATION>99990101</USER_BARCODE_EXPIRATION>
+		</USER_INFO>
+	</USER>
 
 
-21168045392313
-445800
-NPO
-99990101
-
+Example: holds – returns barcode and item hold available for pickup and not yet filled, when querying a user barcode
 
 URL: https://server:port/cgi-bin/sb.cgi?report=hold&uid=21967002133994
 
 Input: uid = patron barcode number
 
 Output:
+	<USER>
+		<USER_BARCODE>21967002133994</USER_BARCODE>
+		<HOLDS>
+			<HOLD_ITEM>
+				<HOLD_BARCODE>31967011537878</HOLD_BARCODE>
+				<HOLD_TITLE>The violets of March : a novel / Sarah Jio</HOLD_TITLE>
+				<HOLD_AVAILABLE_DATE>20110621</HOLD_AVAILABLE_DATE>
+				<HOLD_PICKUP_LOCATION>JBBB</HOLD_PICKUP_LOCATION>
+				<HOLD_PICKUP_DATE>20110626</HOLD_PICKUP_DATE>
+				< HOLD_DB_KEY>1234566</HOLD_DB_KEY >
+			</HOLD_ITEM>
+			<HOLD_ITEM>
+				<HOLD_BARCODE>31967012061787</HOLD_BARCODE>
+				<HOLD_TITLE>The search / Nora Roberts</HOLD_TITLE>
+				<HOLD_AVAILABLE_DATE>20110620</HOLD_AVAILABLE_DATE>
+				<HOLD_PICKUP_LOCATION>JBBB</HOLD_PICKUP_LOCATION>
+				<HOLD_PICKUP_DATE>20110625</HOLD_PICKUP_DATE>
+				<HOLD_DB_KEY>1234567</HOLD_DB_KEY >
+			</HOLD_ITEM>
+		</HOLDS>
+		<HOLDS_UNAVAILABLE>
+			<HOLD_ITEM_UNAVAILABLE>
+				<HOLD_TITLE_UNAVAILABLE>Battlestar Galactica. Season 3</HOLD_TITLE_UNAVAILABLE>
+				<HOLD_DB_KEY>6492350</HOLD_DB_KEY>
+			</HOLD_ITEM_UNAVAILABLE>
+			<HOLD_ITEM_UNAVAILABLE>
+				<HOLD_TITLE_UNAVAILABLE>Battlestar Galactica. Season 2.5</HOLD_TITLE_UNAVAILABLE>
+				<HOLD_DB_KEY>6492352</HOLD_DB_KEY>
+			</HOLD_ITEM_UNAVAILABLE>
+		</HOLDS_UNAVAILABLE>
+	</USER>
 
-21967002133994
+</HOLD_DB_KEY> is needed to enable the cancellation of this item hold.
 
 
-31967011537878
-The violets of March : a novel / Sarah Jio
-20110621
-JBBB
-20110626
-< HOLD_DB_KEY>1234566
-
-
-31967012061787
-The search / Nora Roberts
-20110620
-JBBB
-20110625
-1234567
-
-
-
-
-Portrait of a lady on fire
-
-
-We summon the darkness
-
-
-
-is needed to enable the cancellation of this item hold.
+Example: courtesy– returns barcode and item barcode/title/due date/renew eligibility when querying a user barcode
 
 https://server:port/cgi-bin/sb.cgi?report=courtesy&uid=21967002133994
 
 Input: uid = patron barcode number
 
 Output:
+	<USER>
+		<USER_BARCODE>21967002133994</USER_BARCODE>
+		<COURTESY>
+			<COURTESY_ITEM>
+				<COURTESY_BARCODE>31967010702333</COURTESY_BARCODE>
+				<COURTESY_TITLE>Snacktime! / Barenaked Ladies</COURTESY_TITLE>
+				<COURTESY_DUE_DATE>20110624</COURTESY_DUE_DATE>
+				<COURTESY_RENEW_FLAG/>
+			</COURTESY_ITEM>
+			<COURTESY_ITEM>
+				<COURTESY_BARCODE>31967011418475</COURTESY_BARCODE>
+				<COURTESY_TITLE>But not the hippopotamus / by Sandra Boynton</COURTESY_TITLE>
+				<COURTESY_DUE_DATE>20110624</COURTESY_DUE_DATE>
+				<COURTESY_RENEW_FLAG/>
+			</COURTESY_ITEM>
+			<COURTESY_ITEM>
+				<COURTESY_BARCODE>31967011418236</COURTESY_BARCODE>
+				<COURTESY_TITLE>The going to bed book / by Sandra Boynton</COURTESY_TITLE>
+				<COURTESY_DUE_DATE>20110624</COURTESY_DUE_DATE>
+				<COURTESY_RENEW_FLAG/>
+			</COURTESY_ITEM>
+			<COURTESY_ITEM>
+				<COURTESY_BARCODE>31967011418350</COURTESY_BARCODE>
+				<COURTESY_TITLE>Blue hat, green hat / Sandra Boynton</COURTESY_TITLE>
+				<COURTESY_DUE_DATE>20110624</COURTESY_DUE_DATE>
+				<COURTESY_RENEW_FLAG/>
+			</COURTESY_ITEM>
+		</COURTESY>
+	</USER>
 
-21967002133994
-
-
-31967010702333
-Snacktime! / Barenaked Ladies
-20110624
-
-
-
-31967011418475
-But not the hippopotamus / by Sandra Boynton
-20110624
-
-
-
-31967011418236
-The going to bed book / by Sandra Boynton
-20110624
-
-
-
-31967011418350
-Blue hat, green hat / Sandra Boynton
-20110624
-
-
-
-
-has the following possible values
+<COURTESY_RENEWAL_FLAG> has the following possible values
+"DEFAULT" - Item is eligible for renewal
 11 - Item is not eligible for renewal due to outstanding fees
-12 - Patron Status is BLOCKED or BARRED
-13 - Item is on-hold
-14 - Maximum number renewals for the item has been reached
+12 - Item is not eligible for renewal patron Status is BLOCKED or BARRED
+13 - Item is not eligible for renewal as item is on-hold
+14 - Item is not eligible for renewal as maximum number renewals for the item has been reached
+
+
+Example: overdue– returns barcode and item barcode/title/due date/renew eligibility when querying a user barcode
 
 https://server:port/cgi-bin/sb.cgi?report=overdue&uid=21967002133994
 
 Input: uid = patron barcode number
 
 Output:
+	<USER>
+		<USER_BARCODE>21967002133994</USER_BARCODE>
+		<OVERDUE>
+			<OVERDUE_ITEM>
+				<OVERDUE_BARCODE>31967011342030</OVERDUE_BARCODE>
+				<OVERDUE_TITLE>End of days / Steve Alten</OVERDUE_TITLE>
+				<OVERDUE_DUE_DATE>20110620</OVERDUE_DUE_DATE>
+				<OVERDUE_RENEW_FLAG>13</OVERDUE_RENEW_FLAG>
+			</OVERDUE_ITEM>
+			<OVERDUE_ITEM>
+				<OVERDUE_BARCODE>31967011066951</OVERDUE_BARCODE>
+				<OVERDUE_TITLE>Sworn to silence / Linda Castillo</OVERDUE_TITLE>
+				<OVERDUE_DUE_DATE>20110620</OVERDUE_DUE_DATE>
+				<OVERDUE_RENEW_FLAG>13</OVERDUE_RENEW_FLAG>
+			</OVERDUE_ITEM>
+		</OVERDUE>
+	</USER>
 
-21967002133994
 
-
-31967011342030
-End of days / Steve Alten
-20110620
-13
-
-
-31967011066951
-Sworn to silence / Linda Castillo
-20110620
-13
-
-
-
-has the following possible values
+<OVERDUE_RENEWAL_FLAG> has the following possible values
+"DEFAULT" - Item is eligible for renewal
 11 - Item is not eligible for renewal due to outstanding fees
-12 - Patron Status is BLOCKED or BARRED
-13 - Item is on-hold
-14 - Maximum number renewals for the item has been reached
+12 - Item is not eligible for renewal patron Status is BLOCKED or BARRED
+13 - Item is not eligible for renewal as item is on-hold
+14 - Item is not eligible for renewal as maximum number renewals for the item has been reached
 15 - Item is not eligible for renewal due to limit set on how many overdue items a patron can have at one time
+
+
+Example: overdue– returns user barcode/item barcode and charge status when querying a user barcode
 
 https://server:port/cgi-bin/sb.cgi?report=chkcharge&uid=21967002133994&id=31967011342030
 
-Input: uid = patron barcode number
-id = item barcode number
+Input:	uid = patron barcode number
+		id	= item barcode number
 
 Output:
+	<ITEM>
+		<ITEM_BARCODE>31967011342030</ITEM_BARCODE>
+		<USER_BARCODE>21967002133994</USER_BARCODE>
+		<CHARGED>0</CHARGED>
+	</ITEM>
 
-31967011342030
-21967002133994
-0
-
-has the following possible values
+<CHARGED> has the following possible values
 0 - Item is not charged to patron
 1 - Item is charged to patron
+
+
+Example: chkhold– returns item barcode and if item has a hold
 
 https://server:port/cgi-bin/sb.cgi?report=chkhold&id=31967011342030
 
 Input: id = item barcode number
 
 Output:
-
-31967011342030
-0
+Output:
+	<ITEM>
+		<ITEM_BARCODE>31967011342030</ITEM_BARCODE>
+		<ONHOLD>0</ONHOLD>
+	</ITEM>
 
 < ONHOLD> has the following possible values
 0 - Item has no hold
 1 - Item has a hold
+
+
+Example: fee– returns total fees linked to patron
 
 https://server:port/cgi-bin/sb.cgi?report=fee&uid=21967002133994
 
 Input: uid = patron barcode number
 
 Output:
+	<USER>
+		<USER_BARCODE>21967002133994<USER_BARCODE/>
+		<FEES>
+			<FEE_TOTAL>30.25</FEE_TOTAL>
+		</FEES>
+	</USER>
 
-21967002133994
 
-30.25
-
+Example: noticetype– returns patrons that requested notices via sms or voice
 
 https://server:port/cgi-bin/sb.cgi?report=noticetype&type=sms
 
 Input: type = sms or voice
 
 Output:
+	<USER>
+		<USER_INFO>
+	    	      <USER_BARCODE>21168045392313</USER_BARCODE>
+	    	      <USER_PHONENUMBER>5552221568</USER_ PHONENUMBER >
+	        </USER_INFO>
+		<USER_INFO>
+	    	      <USER_BARCODE>21168045392314</USER_BARCODE>
+	    	      <USER_PHONENUMBER>5552221578</USER_ PHONENUMBER >
+	        </USER_INFO>
+	</USER>
 
 
-21168045392313
-5552221568</USER_ PHONENUMBER >
-
-
-21168045392314
-5552221578</USER_ PHONENUMBER >
-
+Example: cancel– returns success or failure, when attempting to abandon a hold ready for pickup
 
 https://server:port/cgi-bin/sb.cgi?report=cancel&uid=21967002133994&dbkey=1234566
 
@@ -202,260 +242,29 @@ Input: uid = patron barcode number
 dbkey = hold DB key
 
 Output:
-< ITEM>
-0</ HOLD_CANCEL_STATUS>
-</ ITEM>
+	<ITEM>
+		<HOLD_CANCEL_STATUS>0</HOLD_CANCEL_STATUS>
+	</ITEM>
 
 < HOLD_CANCEL_STATUS > has the following possible values
 0 – Cancel item hold failed
 1 – Cancel item hold succeeded
+
+
+Example: holdexpiration– returns list of patron hold items that expired and not fulfilled 
 
 https://server:port/cgi-bin/sb.cgi?report=holdexpiration&date=20200817
 
 Input: date = date item hold request expired, YYYYMMDD
 
 Output:
-
-< ITEM_INFO>
-21168045392313
-< ITEM_TITLE>Invisible Man
-</ ITEM_INFO>
-< ITEM_INFO>
-21168045392333
-< ITEM_TITLE>Invisible Woman
-</ ITEM_INFO>
-
-ShowMeKey
-Validating the response to request for the internal ID when we provide the library card
-
-GET
-userkey
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=userkey&uid=21168045918653
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-userkey
-report ID
-
-uid
-21168045918653
-GET
-userkey fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=userkey&uid=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-userkey
-report ID
-
-uid
-999
-Library card
-
-ShowMeBarcode
-Validating the response to request for the patron library card when we provide the internal ID
-
-GET
-userbarcode
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=userbarcode&ukey=593963
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-userbarcode
-report ID
-
-ukey
-593963
-GET
-userbarcode fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=userkey&uid=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-userkey
-report ID
-
-uid
-999
-Library card
-
-ShowMeholds
-Validating the response to request for the patron hold items when we provide the library card
-
-GET
-patronholds
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=hold&uid=21168045918653
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-hold
-report ID
-
-uid
-21168045918653
-Library card
-
-GET
-patronholds fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=hold&uid=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-hold
-uid
-999
-ShowMecourtesy
-Validating the response to request for the patron courtesy items due soon when we provide the library card
-
-GET
-patroncourtesy
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=courtesy&uid=21168045918653
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-courtesy
-report ID
-
-uid
-21168045918653
-Library card
-
-GET
-patroncourtesy fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=hold&uid=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-hold
-uid
-999
-ShowMeoverdue
-Validating the response to request for the patron overdue items when we provide the library card
-
-GET
-patronoverdue
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=overdue&uid=21168045918653
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-overdue
-report ID
-
-uid
-21168045918653
-Library card
-
-GET
-patronoverdue fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=overdue&uid=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-overdue
-uid
-999
-ShowMeChargedItem
-Validating the response to request for the patron overdue items when we provide the library card
-
-GET
-patronchargeditem
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=chkcharge&uid=21168045918653&id=31168131137091
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-chkcharge
-report ID
-
-uid
-21168045918653
-Library card
-
-id
-31168131137091
-item barcode
-
-GET
-patronchargeditem fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=chkcharge&uid=999&id=31168131137091
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-chkcharge
-uid
-999
-id
-31168131137091
-GET
-patronchargeditem fail 2
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=chkcharge&uid=21168045918653&id=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-chkcharge
-uid
-21168045918653
-id
-999
-ShowMeOnHold
-Validating the response to request for the patron overdue items when we provide the library card
-
-GET
-itemhashold
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=chkhold&id=31168131137091
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-chkhold
-report ID
-
-id
-31168131137091
-GET
-itemhashold fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=chkhold&id=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-chkhold
-id
-999
-ShowMeFees
-Validating the response to request for the patron overdue items when we provide the library card
-
-GET
-feeinfo
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=fee&uid=21168045918653
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-fee
-report ID
-
-uid
-21168045918653
-GET
-feeinfo fail
-https://lib-api-dev.multcolib.org:58461/cgi-bin/sb.cgi?report=fee&uid=999
-userkey returns user key and other patron related information when querying with a library card number
-
-Request Params
-report
-fee
-uid
-999
+	<USER>
+		< ITEM_INFO>
+			<USER_BARCODE>21168045392313</USER_BARCODE>
+			< ITEM_TITLE>Invisible Man</ITEM_TITLE >
+	 	</ITEM_INFO>
+		<ITEM_INFO>
+			<USER_BARCODE>21168045392333</USER_BARCODE>
+			<ITEM_TITLE>Invisible Woman</ITEM_TITLE >
+	 	</ITEM_INFO>
+	</USER>
