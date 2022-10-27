@@ -6,7 +6,7 @@ NOTES: custom Information fails on test, LOSFORMAT policy does not exist
 
 ## SBAPI endpoints 
 
-### **userkey** – returns user key/user barcode/home library/barcode expiration date when querying a user barcode 
+### _userkey_ – returns user key/user barcode/home library/barcode expiration date when querying a user barcode 
 
 URL: https://server:port/cgi-bin/sb.cgi?report=userkey&uid=21168045392313
 
@@ -27,7 +27,7 @@ Output:
 	</USER>
 ```
 
-### **userbarcode** – returns user key/user barcode/home library/barcode expiration date when querying a user key
+### _userbarcode_ – returns user key/user barcode/home library/barcode expiration date when querying a user key
 
 URL: https://server:port/cgi-bin/sb.cgi?report=userbarcode&ukey=445800
 
@@ -48,7 +48,7 @@ Output:
 	</USER>
 ```
 
-###  holds – returns barcode and item hold available for pickup and not yet filled, when querying a user barcode
+### _holds_ – returns barcode and item hold available for pickup and not yet filled, when querying a user barcode
 
 URL: https://server:port/cgi-bin/sb.cgi?report=hold&uid=21967002133994
 
@@ -94,7 +94,7 @@ Output:
 
 `</HOLD_DB_KEY>` is needed to enable the cancellation of this item hold.
 
-###  courtesy – returns barcode and item barcode/title/due date/renew eligibility when querying a user barcode
+### _courtesy_ – returns barcode and item barcode/title/due date/renew eligibility when querying a user barcode
 
 https://server:port/cgi-bin/sb.cgi?report=courtesy&uid=21967002133994
 
@@ -143,7 +143,7 @@ Output:
 13 - Item is not eligible for renewal as item is on-hold
 14 - Item is not eligible for renewal as maximum number renewals for the item has been reached
 
-###  overdue– returns barcode and item barcode/title/due date/renew eligibility when querying a user barcode
+### _overdue_ – returns barcode and item barcode/title/due date/renew eligibility when querying a user barcode
 
 https://server:port/cgi-bin/sb.cgi?report=overdue&uid=21967002133994
 
@@ -181,7 +181,7 @@ Output:
 14 - Item is not eligible for renewal as maximum number renewals for the item has been reached
 15 - Item is not eligible for renewal due to limit set on how many overdue items a patron can have at one time
 
-###  overdue– returns user barcode/item barcode and charge status when querying a user barcode
+### _overdue_ – returns user barcode/item barcode and charge status when querying a user barcode
 
 https://server:port/cgi-bin/sb.cgi?report=chkcharge&uid=21967002133994&id=31967011342030
 
@@ -204,7 +204,7 @@ Output:
 1
 : Item is charged to patron
 
-###  chkhold– returns item barcode and if item has a hold
+### _chkhold_ – returns item barcode and if item has a hold
 
 https://server:port/cgi-bin/sb.cgi?report=chkhold&id=31967011342030
 
@@ -228,7 +228,7 @@ Output:
 1
 : Item has a hold
 
-###  fee– returns total fees linked to patron
+### _fee_ – returns total fees linked to patron
 
 https://server:port/cgi-bin/sb.cgi?report=fee&uid=21967002133994
 
@@ -247,7 +247,7 @@ Output:
 	</USER>
 ```
 
-###  noticetype– returns patrons that requested notices via sms or voice
+### _noticetype_ – returns patrons that requested notices via sms or voice
 
 https://server:port/cgi-bin/sb.cgi?report=noticetype&type=sms
 
@@ -270,7 +270,7 @@ Output:
 	</USER>
 ```
 
-###  cancel– returns success or failure, when attempting to abandon a hold ready for pickup
+### _cancel_ – returns success or failure, when attempting to abandon a hold ready for pickup
 
 https://server:port/cgi-bin/sb.cgi?report=cancel&uid=21967002133994&dbkey=1234566
 
@@ -291,7 +291,7 @@ Output:
 0 – Cancel item hold failed
 1 – Cancel item hold succeeded
 
-###  holdexpiration– returns list of patron hold items that expired and not fulfilled
+### _holdexpiration_ – returns list of patron hold items that expired and not fulfilled
 
 https://server:port/cgi-bin/sb.cgi?report=holdexpiration&date=20200817
 
