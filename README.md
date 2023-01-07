@@ -1,5 +1,9 @@
 # libsbapi
 
+Originally written by Andrew Livesay
+
+Maintained by John Houser (john.houser@multco.us) for Multnomah County Library
+
 ## Custom API for Integration of Shoutbomb with Symphony
 
 NOTES: custom Information fails on test, LOSFORMAT policy does not exist
