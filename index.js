@@ -386,7 +386,7 @@ function ILSWSErrorResponse (error) {
       return Boom.gatewayTimeout(error.message + ' (500)')
     default:
       console.log(error)
-      if (error.response.data.messageList.length) {
+      if (typeof error.response.data.messageList !== 'undefined') {
         console.log(error.response.data.messageList[0].message)
       }
       return Boom.badImplementation(`ILSWS ${error.toString()}` + ' (600)')
